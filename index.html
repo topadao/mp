@@ -1,33 +1,28 @@
 
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Checkout R$36,90</title>
-  <style>
-    body { font-family: sans-serif; text-align: center; padding: 40px; background: #f5f5f5; }
-    button { padding: 12px 24px; font-size: 16px; background: #06f; color: white; border: none; border-radius: 8px; cursor: pointer; }
-    img { margin-top: 20px; width: 300px; }
-    .link { margin-top: 10px; font-size: 14px; word-break: break-all; }
-  </style>
+  <title>Checkout Pix R$36,90</title>
 </head>
 <body>
-  <h1>Pagamento de R$36,90</h1>
-  <button onclick="gerarPagamento()">Gerar QR Code</button>
+  <h1>Gerar QR Code Pix</h1>
+  <button onclick="gerarPix()">Gerar QR Code</button>
   <div id="resultado"></div>
 
   <script>
-    async function gerarPagamento() {
+    async function gerarPix() {
       const res = await fetch('/criar-pagamento', { method: 'POST' });
       const data = await res.json();
 
       if (data.qr_code_base64) {
         document.getElementById('resultado').innerHTML = `
-          <img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code Pix">
-          <div class="link">Link: <a href="${data.link}" target="_blank">${data.link}</a></div>
+          <p><strong>QR Code:</strong></p>
+          <img src="data:image/png;base64,${data.qr_code_base64}" /><br>
+          <p><a href="${data.link}" target="_blank">Abrir link de pagamento</a></p>
         `;
       } else {
-        document.getElementById('resultado').innerHTML = '<p>Erro ao gerar pagamento.</p>';
+        alert('Erro ao gerar QR Code');
       }
     }
   </script>
