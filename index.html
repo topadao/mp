@@ -1,28 +1,95 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Checkout Pix R$36,90</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pagamento via Pix</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #007BFF;
+    }
+
+    p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #qrcode {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    #qrcode img {
+      width: 200px;
+      height: 200px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Gerar QR Code Pix</h1>
-  <button onclick="gerarPix()">Gerar QR Code</button>
-  <div id="resultado"></div>
+  <div class="container">
+    <h1>Pagamento via Pix</h1>
+    <p>Valor: <strong>R$36,90</strong></p>
+    <button onclick="gerarPagamento()">Gerar QR Code</button>
+    <div id="qrcode"></div>
+  </div>
 
   <script>
-    async function gerarPix() {
-      const res = await fetch('/criar-pagamento', { method: 'POST' });
-      const data = await res.json();
+    async function gerarPagamento() {
+      try {
+        const res = await fetch('/criar-pagamento');
+        const data = await res.json();
 
-      if (data.qr_code_base64) {
-        document.getElementById('resultado').innerHTML = `
-          <p><strong>QR Code:</strong></p>
-          <img src="data:image/png;base64,${data.qr_code_base64}" /><br>
-          <p><a href="${data.link}" target="_blank">Abrir link de pagamento</a></p>
-        `;
-      } else {
-        alert('Erro ao gerar QR Code');
+        const qrcodeDiv = document.getElementById('qrcode');
+        qrcodeDiv.innerHTML = '';
+
+        const img = document.createElement('img');
+        img.src = data.qr_code_base64;
+        img.alt = "QR Code de Pagamento";
+        qrcodeDiv.appendChild(img);
+      } catch (error) {
+        alert('Erro ao gerar o pagamento. Tente novamente.');
       }
     }
   </script>
