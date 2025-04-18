@@ -1,14 +1,14 @@
+import express from 'express';
+import fetch from 'node-fetch';
+import cors from 'cors';
 
-const express = require('express');
-const fetch = require('node-fetch');
-const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 10000;
 
 app.use(cors());
 app.use(express.json());
 
-const ACCESS_TOKEN = 'APP_USR-7905763012500383-041815-34b3be71351ee11f9db214a2fe271c7c-1557375351'; // Mercado Pago Token
+const ACCESS_TOKEN = 'APP_USR-7905763012500383-041815-34b3be71351ee11f9db214a2fe271c7c-1557375351';
 
 app.post('/criar-pagamento', async (req, res) => {
   try {
