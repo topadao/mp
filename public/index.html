@@ -1,1 +1,50 @@
 
+import express from "express";
+import mercadopago from "mercadopago";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const app = express();
+const PORT = process.env.PORT || 10000;
+
+// Configurar credencial
+mercadopago.configure({
+  access_token: "APP_USR-7905763012500383-041815-34b3be71351ee11f9db214a2fe271c7c-1557375351",
+});
+
+// Resolver path para usar com ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Servir arquivos estáticos (HTML, CSS etc.)
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/criar-pagamento", async (req, res) => {
+  try {
+    const payment = await mercadopago.preferences.create({
+      items: [{
+        title: "Pagamento Checkout",
+        quantity: 1,
+        unit_price: 36.9,
+        currency_id: "BRL",
+      }],
+    });
+
+    const initPoint = payment.body.init_point;
+
+    // Gerar QR Code como imagem base64 (pode ser usado em <img src=...>)
+    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(initPoint)}&size=200x200`;
+
+    res.json({
+      link: initPoint,
+      qr_code_base64: qrImageUrl,
+    });
+  } catch (error) {
+    console.error("Erro ao criar pagamento:", error);
+    res.status(500).json({ error: "Erro ao gerar pagamento" });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`✅ Servidor rodando na porta ${PORT}`);
+});
